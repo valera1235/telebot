@@ -2,7 +2,7 @@
 import telebot
 from telebot import types
 
-bot = telebot.TeleBot('')
+bot = telebot.TeleBot('7751544858:AAH-kVNYBHGCVRjvhqCFRSVZxH647rcuGGI')
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -18,6 +18,7 @@ def func(message):
         markup.add(types.InlineKeyboardButton('Перевод частоты излучения или энергии фотона в длину волны света', callback_data='функция_1'))
         markup.add(types.InlineKeyboardButton('Перевод длины волны света в частоты излучения или энергии фотона',callback_data='функция_2'))
         markup.add(types.InlineKeyboardButton('Вычисление флюенса лазерной системы по средней мощности',callback_data='функция_3'))
+        markup.add(types.InlineKeyboardButton('Оставить отзыв', callback_data='отзыв'))
         bot.send_message(message.chat.id, "Что вас интересует?", reply_markup=markup)
     else:
         bot.send_message(message.chat.id, 'Я вас не понимаю')
@@ -34,6 +35,11 @@ def check_callback(callback):
         markup.add(types.InlineKeyboardButton('Частоту излучения', callback_data='функция_длина_излучения'))
         markup.add(types.InlineKeyboardButton('Энергию фотона', callback_data='функция_длина_энергию'))
         bot.send_message(callback.message.chat.id, "В какие данные надо перевести", reply_markup=markup)
+
+    elif callback.data =='отзыв':
+       bot.send_message(callback.message.chat.id, 'Напишите отзыв:')
+       bot.register_next_step_handler(callback.message, handle_feedback_input)
+
 
     elif callback.data == 'функция_излучение_длина':
         bot.send_message(callback.message.chat.id, 'Введите частоту (Гц):')
@@ -56,7 +62,8 @@ def check_callback(callback):
         markup.add(types.InlineKeyboardButton('Перевод частоты излучения или энергии фотона в длину волны света',callback_data='функция_1'))
         markup.add(types.InlineKeyboardButton('Перевод длины волны света в частоты излучения или энергии фотона',callback_data='функция_2'))
         markup.add(types.InlineKeyboardButton('Вычисление флюенса лазерной системы по средней мощности', callback_data='функция_3'))
-        bot.send_message(callback.message.chat.id, "Что вас интересует?", reply_markup=markup)
+        markup.add(types.InlineKeyboardButton('Оставить отзыв', callback_data='отзыв'))
+        bot.send_message(callback.message.chat.id, 'Что вас интересует?', reply_markup=markup)
 
 def handle_frequency_length_input(message):
     try:
@@ -95,7 +102,7 @@ def handle_energy_length_input(message):
     try:
         energy = float(message.text)
         result=pow(10,-1)
-        length=(((6.6* (3 * result))/1.6)/energy)
+        length=((6.6* (3 * result))/1.6)/energy
         if 0.01 < length < 0.1 :
             bot.send_message(message.chat.id, f"Длина составляет: {length} мкм \nДиапазон длины волны: мириаметровые")
         elif 0.001 < length <= 0.01:
@@ -121,7 +128,7 @@ def handle_energy_length_input(message):
         markup.add(types.InlineKeyboardButton('Частоты излучения', callback_data='функция_излучение_длина'))
         markup.add(types.InlineKeyboardButton('Энергии фотона', callback_data='функция_энергия_длина'))
         markup.add(types.InlineKeyboardButton('Вернуться к функциям', callback_data='вернуться_к_функциям'))
-        bot.send_message(message.chat.id, "Из каких данных надо переводить", reply_markup=markup)
+        bot.send_message(message.chat.id, 'Из каких данных надо переводить', reply_markup=markup)
     except ValueError:
         bot.send_message(message.chat.id, "Пожалуйста, введите корректное число.")
 
@@ -129,12 +136,12 @@ def handle_length_frequency_input(message):
     try:
         frequency = float(message.text)
         frequency_1 = 299792458 / frequency
-        bot.send_message(message.chat.id, f"Частота излучения состовляет: {frequency_1} Гц")
+        bot.send_message(message.chat.id, f'Частота излучения состовляет: {frequency_1} Гц')
         markup = types.InlineKeyboardMarkup()
         markup.add(types.InlineKeyboardButton('Частоту излучения', callback_data='функция_длина_излучения'))
         markup.add(types.InlineKeyboardButton('Энергию фотона', callback_data='функция_длина_энергию'))
         markup.add(types.InlineKeyboardButton('Вернуться к функциям', callback_data='вернуться_к_функциям'))
-        bot.send_message(message.chat.id, "В какие данные надо перевести", reply_markup=markup)
+        bot.send_message(message.chat.id, 'В какие данные надо перевести', reply_markup=markup)
     except ValueError:
         bot.send_message(message.chat.id, "Пожалуйста, введите корректное число.")
 
@@ -143,17 +150,33 @@ def handle_length_energy_input(message):
         energy = float(message.text)
         result = pow(10,-1)
         energy_1 = (6.6 * (3* result))/(energy * 1.6 )
-        bot.send_message(message.chat.id, f"Энергия фотона составляет: {energy_1} эВ")
+        bot.send_message(message.chat.id, f'Энергия фотона составляет: {energy_1} эВ')
         markup = types.InlineKeyboardMarkup()
         markup.add(types.InlineKeyboardButton('Частоту излучения', callback_data='функция_длина_излучения'))
         markup.add(types.InlineKeyboardButton('Энергию фотона', callback_data='функция_длина_энергию'))
         markup.add(types.InlineKeyboardButton('Вернуться к функциям', callback_data='вернуться_к_функциям'))
-        bot.send_message(message.chat.id, "В какие данные надо перевести", reply_markup=markup)
+        bot.send_message(message.chat.id, 'В какие данные надо перевести', reply_markup=markup)
     except ValueError:
-        bot.send_message(message.chat.id, "Пожалуйста, введите корректное число.")
+        bot.send_message(message.chat.id, 'Пожалуйста, введите корректное число.')
+
+def handle_feedback_input(message):
+    try:
+        if message.content_type == 'text':
+            user_input = message.text
+            with open('user_info.txt', 'a', encoding='utf-8') as file:
+                file.write(user_input + '\n')
+            markup = types.InlineKeyboardMarkup()
+            markup.add(types.InlineKeyboardButton('Вернуться к функциям', callback_data='вернуться_к_функциям'))
+            bot.send_message(message.chat.id, 'Ваше сообщение сохранено', reply_markup=markup)
+        else:
+            bot.send_message(message.chat.id, 'Пожалуйста, отправьте текстовое сообщение.')
+    except Exception as e:
+        print(f"Произошла ошибка: {e}")
+        bot.send_message(message.chat.id, 'Произошла ошибка при обработке вашего сообщения.')
+
+
 
 bot.polling(none_stop=True)
-
 
 
 
